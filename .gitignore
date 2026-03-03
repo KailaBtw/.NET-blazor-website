@@ -218,7 +218,6 @@ project.lock.json
 
 # Output folder used by Webpack or other FE stuff
 **/node_modules/*
-**/wwwroot/*
 
 # SpecFlow specific
 *.feature.cs
@@ -231,3 +230,8 @@ AppPackages/
 #####
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
+
+# **/wwwroot/*
+
+# Local publish/check output
+_publish_check/
