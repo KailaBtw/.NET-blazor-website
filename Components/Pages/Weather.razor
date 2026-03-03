@@ -1,9 +1,12 @@
 ﻿@page "/weather"
+@using MudBlazor
 @attribute [StreamRendering]
 
 <PageTitle>Weather</PageTitle>
 
 <h1>Weather</h1>
+
+<MudBreadcrumbs Items="_items"></MudBreadcrumbs>
 
 <p>This component demonstrates showing data.</p>
 
@@ -38,6 +41,12 @@ else
 
 @code {
     private WeatherForecast[]? forecasts;
+
+    private List<BreadcrumbItem> _items =
+    [
+        new("Home", href: "/", icon: Icons.Material.Filled.Home, disabled: true),
+        new("Weather", href: "/weather", disabled: true, icon: Icons.Material.Filled.Pageview),
+    ];
 
     protected override async Task OnInitializedAsync()
     {
