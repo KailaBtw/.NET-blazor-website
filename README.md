@@ -1,6 +1,7 @@
 # dotnet-blazor-website
 
 A .NET Blazor website (Blazor WebAssembly) with MudBlazor UI, pricing data demo, and sample pages. Built with C# and ASP.NET Core.
+Visit the GitHub Pages site [kailabtw.github.io/dotnet-blazor-website/](https://kailabtw.github.io/dotnet-blazor-website/).
 
 ## Purpose
 
@@ -28,10 +29,6 @@ dotnet build
 dotnet watch run
 ```
 
-Then open **http://localhost:5049** (or the URL printed in the console) in a browser. Stop with `Ctrl+C`.
-
----
+Then open **<http://localhost:5049>** (or the URL printed in the console) in a browser. Stop with `Ctrl+C`.
 
 See **[docs/RUN_BLAZOR_CLI.md](docs/RUN_BLAZOR_CLI.md)** for more CLI options.
-
-See **[docs/DEPLOY_ON_GH_PAGES.md](docs/DEPLOY_ON_GH_PAGES.md)** for more info on deploying to GH pages. 

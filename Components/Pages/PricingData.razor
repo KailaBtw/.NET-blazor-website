@@ -35,8 +35,9 @@
 
     private List<BreadcrumbItem> _items =
     [
-        new("Home", href: "/", icon: Icons.Material.Filled.Home),
-        new("Pricing Data", href: "/pricing-data", disabled: true, icon: Icons.Material.Filled.CurrencyExchange),
+        // Use paths relative to the app base href so this works both locally and on GitHub Pages.
+        new("Home", href: "./", icon: Icons.Material.Filled.Home),
+        new("Pricing Data", href: "pricing-data", disabled: true, icon: Icons.Material.Filled.CurrencyExchange),
     ];
 
     private int _index = -1; //default value cannot be 0 -> first selectedindex is 0.
