@@ -1,73 +1,111 @@
 ﻿@page "/pricing-data"
 @using MudBlazor
+@using MudBlazor.Charts;
+@using System.Globalization
+@using System.IO
+@inject IWebHostEnvironment WebHost
+
 @attribute [StreamRendering]
 
-<PageTitle>Weather</PageTitle>
+<PageTitle>Amazon Price Tracking</PageTitle>
 
-<h1>Weather</h1>
+<h1>Amazon Price Tracking</h1>
 
 <MudBreadcrumbs Items="_items"></MudBreadcrumbs>
 
-<p>This component demonstrates showing data.</p>
+<h3>Sony WH-1000XM4 </h3>
+<h3>Noise-Cancelling Headphones</h3>
+<p>Find the lowest price for the product in the last 6 months!</p>
 
-@if (forecasts == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th aria-label="Temperature in Celsius">Temp. (C)</th>
-                <th aria-label="Temperature in Fahrenheit">Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+
+<MudPaper Class="doc-section-component-container">
+    <MudChart 
+    ChartType="ChartType.Line" 
+    ChartSeries="@_series" 
+    ChartLabels="@_xAxisLabels" 
+    ChartOptions="@_options" 
+    Width="100%" 
+    Height="@($"{_height}px")"
+    @bind-SelectedIndex="_index" 
+    MatchBoundsToSize="_matchBoundsToSize"/>
+</MudPaper>
+
+<p>@(LowestPriceText != null ? " " + LowestPriceText : null)</p>
 
 @code {
-    private WeatherForecast[]? forecasts;
 
     private List<BreadcrumbItem> _items =
     [
         new("Home", href: "/", icon: Icons.Material.Filled.Home),
-        new("Weather", href: "/weather", disabled: true, icon: Icons.Material.Filled.Pageview),
+        new("Pricing Data", href: "/pricing-data", disabled: true, icon: Icons.Material.Filled.Pageview),
     ];
+
+    private int _index = -1; //default value cannot be 0 -> first selectedindex is 0.
+    private LineChartOptions _options = new LineChartOptions()
+    {
+        XAxisTitle = "Months",
+        YAxisTitle = "Price ($)",
+        YAxisTicks = 6, 
+        MaxNumYAxisTicks = 6,
+        YAxisFormat = "0"
+    };
+
+    private int _height = 350;
+    private bool _matchBoundsToSize = false;
+
+    private List<ChartSeries<double>> _series = new();
+    private string[] _xAxisLabels = Array.Empty<string>();
+    private string? LowestPriceText;
 
     protected override async Task OnInitializedAsync()
     {
-        // Simulate asynchronous loading to demonstrate streaming rendering
-        await Task.Delay(500);
-
-        var startDate = DateOnly.FromDateTime(DateTime.Now);
-        var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-        forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        await base.OnInitializedAsync();
+        await LoadCsvAndBindChartAsync();
+        _options.SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>()
         {
-            Date = startDate.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = summaries[Random.Shared.Next(summaries.Length)]
-        }).ToArray();
+            { _series[0], new SeriesDisplayOverride() },
+        };
     }
-
-    private class WeatherForecast
+    
+        private async Task LoadCsvAndBindChartAsync()
     {
-        public DateOnly Date { get; set; }
-        public int TemperatureC { get; set; }
-        public string? Summary { get; set; }
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        var path = Path.Combine(WebHost.ContentRootPath, "assets", "mock_price_data.csv");
+        if (!File.Exists(path))
+        {
+            _series = new List<ChartSeries<double>> { new() { Name = "Price", Data = Array.Empty<double>() } };
+            _xAxisLabels = Array.Empty<string>();
+            return;
+        }
+
+        var lines = await File.ReadAllLinesAsync(path);
+        var rows = lines
+            .Skip(1)
+            .Select(line => line.Split(',', StringSplitOptions.TrimEntries))
+            .Where(cols => cols.Length >= 6)
+            .Select(cols => new
+            {
+                Date = DateOnly.Parse(cols[0], CultureInfo.InvariantCulture),
+                CurrentPrice = double.Parse(cols[5], CultureInfo.InvariantCulture)
+            })
+            .OrderBy(r => r.Date)
+            .ToList();
+
+        _xAxisLabels = rows.Select(r => r.Date.ToString("MMM", CultureInfo.InvariantCulture)).ToArray();
+        var prices = rows.Select(r => r.CurrentPrice).ToArray();
+        _series = new List<ChartSeries<double>>
+        {
+            new() { Name = "Price", Data = prices }
+        };
+
+        if (rows.Count > 0)
+        {
+            var lowest = rows.MinBy(r => r.CurrentPrice);
+            LowestPriceText = $"Lowest price: ${lowest!.CurrentPrice:F2} on {lowest.Date:MMM d, yyyy}.";
+        }
+
+        _options.SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>
+        {
+            { _series[0], new SeriesDisplayOverride() }
+        };
     }
 }
