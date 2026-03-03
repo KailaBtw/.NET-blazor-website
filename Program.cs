@@ -1,4 +1,4 @@
-using connect_four_game.Components;
+using dotnet_blazor_website.Components;
 using MudBlazor;
 using MudBlazor.Services;
 
