@@ -1,9 +1,8 @@
-﻿@page "/pricing-data"
+@page "/pricing-data"
 @using MudBlazor
 @using MudBlazor.Charts;
 @using System.Globalization
-@using System.IO
-@inject IWebHostEnvironment WebHost
+@inject HttpClient Http
 
 @attribute [StreamRendering]
 
@@ -67,17 +66,15 @@
         };
     }
     
-        private async Task LoadCsvAndBindChartAsync()
+    private async Task LoadCsvAndBindChartAsync()
     {
-        var path = Path.Combine(WebHost.ContentRootPath, "assets", "mock_price_data.csv");
-        if (!File.Exists(path))
-        {
-            _series = new List<ChartSeries<double>> { new() { Name = "Price", Data = Array.Empty<double>() } };
-            _xAxisLabels = Array.Empty<string>();
-            return;
-        }
+        // CSV is served as a static asset from wwwroot/assets/mock_price_data.csv
+        var csv = await Http.GetStringAsync("assets/mock_price_data.csv");
+        var lines = csv
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+            .Select(l => l.TrimEnd('\r'))
+            .ToArray();
 
-        var lines = await File.ReadAllLinesAsync(path);
         var rows = lines
             .Skip(1)
             .Select(line => line.Split(',', StringSplitOptions.TrimEntries))
