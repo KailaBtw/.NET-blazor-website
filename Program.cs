@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
-using dotnet_blazor_website.Components;
+using dotnet_blazor_price_tracker.Components;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 

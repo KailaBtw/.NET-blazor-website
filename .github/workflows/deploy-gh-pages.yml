@@ -26,10 +26,10 @@ jobs:
           dotnet-version: "10.0.x"
 
       - name: Restore
-        run: dotnet restore dotnet-blazor-website.csproj
+        run: dotnet restore dotnet-blazor-price-tracker.csproj
 
       - name: Publish Blazor WASM
-        run: dotnet publish dotnet-blazor-website.csproj -c Release -o ./publish --no-restore
+        run: dotnet publish dotnet-blazor-price-tracker.csproj -c Release -o ./publish --no-restore
 
       - name: Verify publish output
         run: |
@@ -50,7 +50,11 @@ jobs:
 
       - name: Set base href for GitHub Pages
         run: |
-          sed -i 's|<base href="/" />|<base href="/dotnet-blazor-price-tracker/" />|g' ./publish/wwwroot/index.html ./publish/wwwroot/404.html
+          BASE_HREF="/dotnet-blazor-price-tracker/"
+          for f in ./publish/wwwroot/index.html ./publish/wwwroot/404.html; do
+            sed -i "s|<base href=\"[^\"]*\" */>|<base href=\"$BASE_HREF\" />|g" "$f"
+          done
+          grep -o '<base href="[^"]*"' ./publish/wwwroot/index.html || true
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

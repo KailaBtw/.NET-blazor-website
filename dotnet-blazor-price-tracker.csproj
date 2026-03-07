@@ -4,8 +4,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>dotnet_blazor_website</RootNamespace>
-    <AssemblyName>dotnet-blazor-website</AssemblyName>
+    <RootNamespace>dotnet_blazor_price_tracker</RootNamespace>
+    <AssemblyName>dotnet-blazor-price-tracker</AssemblyName>
     <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
   </PropertyGroup>
 
@@ -13,6 +13,8 @@
     <!-- Exclude Api backend so only the Blazor app is compiled (cross-platform paths) -->
     <Compile Remove="Api/**" />
     <Compile Remove="Api\**" />
+    <Content Remove="publish/**" />
+    <Content Remove="publish\**" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.3" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0" />

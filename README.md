@@ -1,4 +1,4 @@
-# dotnet-blazor-website
+# dotnet-blazor-price-tracker
 
 A .NET Blazor WebAssembly app with MudBlazor UI, pricing data demos, and sample pages.
 
