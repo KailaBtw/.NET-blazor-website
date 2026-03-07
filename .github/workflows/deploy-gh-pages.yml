@@ -48,6 +48,10 @@ jobs:
       - name: Add 404.html for client routing
         run: cp ./publish/wwwroot/index.html ./publish/wwwroot/404.html 2>/dev/null || true
 
+      - name: Set base href for GitHub Pages
+        run: |
+          sed -i 's|<base href="/" />|<base href="/dotnet-blazor-website/" />|g' ./publish/wwwroot/index.html ./publish/wwwroot/404.html
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
